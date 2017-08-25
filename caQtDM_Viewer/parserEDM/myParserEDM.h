@@ -47,8 +47,8 @@ public:
     void openFile(char *outFile);
     void parseFile(char *infile);
     void closeFile();
-    void writeProperty(const QString& name, const QString& type, const QString& value );
-    void writeOpenProperty(const QString& name);
+    void writeProperty(const QString& name, const QString& type, const QString& value, bool stdset=true);
+    void writeOpenProperty(const QString& name, bool stdset=true);
     void writeTaggedString(const QString& type, const QString& value );
     void writeCloseProperty();
     void writeStyleSheet(int r, int g, int b);
@@ -58,7 +58,7 @@ public:
 
     void Qt_writeOpenTag(char *tag, char *typ, char *value);
     void Qt_writeCloseTag(char *tag, char *value, int visibilityStatic);
-    void Qt_handleString(char *prop, char *tag, char *value);
+    void Qt_handleString(char *prop, char *tag, const char *value);
     void Qt_setColor(char *property, int r, int g, int b, int alpha);
     void Qt_setColorForeground(char *widget, int r, int g, int b, int alpha);
     void Qt_setColorBackground(char *widget, int r, int g, int b, int alpha);

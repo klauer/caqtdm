@@ -1,35 +1,13 @@
-caTable {
-       font: 10pt;
-       background: cornsilk;
-       alternate-background-color: wheat;
-}
-
-caLineEdit {
+PyDMLineEdit {
      border-radius: 1px;
      background: lightyellow;
      color: black;
  }
 
-caTextEntry {
-    color: rgb(127, 0, 63);
-    background-color: cornsilk;
-    selection-color: #0a214c;
-    selection-background-color: wheat;
-    border: 1px groove black;
-    border-radius: 1px;
-    padding: 1px;
-}
-
-caTextEntry:focus {
-    padding: 0px;
-    border: 2px groove darkred;
-    border-radius: 1px;
-}
-
 QPushButton {
       border-color: #00b;
       border-radius: 2px;
-      padding: 3px;
+      padding: 1px;
       border-width: 1px;
 
 	background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,
@@ -63,29 +41,24 @@ caChoice {
                                   stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
 }
 
-caChoice > QPushButton {
-      text-align: left;
-      padding: 1px;
-}
-
 /* when font specified, no font sizing is done any more,  font: 10pt; is not bad. You could Enable this when you converted from .adl files
-caRelatedDisplay  > QPushButton {
+PyDMRelatedDisplayButton > QPushButton {
 font: 10pt;
 }
 
-caShellCommand  > QPushButton {
+PyDMShellCommand > QPushButton {
 font: 10pt;
 }
 */
 
-caSlider::groove:horizontal {
+PyDMSlider::groove:horizontal {
 border: 1px solid #bbb;
 background: lightgrey;
 height: 20px;
 border-radius: 4px;
 }
 
-caSlider::handle:horizontal {
+PyDMSlider::handle:horizontal {
 background: red;
 border: 1px solid #777;
 width: 13px;
@@ -93,6 +66,3 @@ margin-top: -2px;
 margin-bottom: -2px;
 border-radius: 2px;
 }
-
-
-

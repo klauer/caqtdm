@@ -126,20 +126,85 @@ void myParserEDM::closeFile()
 
     xw->writeCloseTag( "widget");
     xw->writeCloseTag( "widget");
-    xw->writeRaw( "</ui>");
+
+    const char *custom_widgets[][3] = {
+        {"pydm.widgets.base", "PyDMWritableWidget", "PyDMWidget"},
+        {"pydm.widgets.baseplot", "BasePlot", "PlotWidget"},
+        {"pydm.widgets.byte", "PyDMBitIndicator", "QWidget"},
+        {"pydm.widgets.byte", "PyDMByteIndicator", "QWidget"},
+        {"pydm.widgets.checkbox", "PyDMCheckbox", "QCheckBox"},
+        {"pydm.widgets.drawing", "PyDMDrawing", "QWidget"},
+        {"pydm.widgets.drawing", "PyDMDrawingArc", "PyDMDrawing"},
+        {"pydm.widgets.drawing", "PyDMDrawingChord", "PyDMDrawingArc"},
+        {"pydm.widgets.drawing", "PyDMDrawingCircle", "PyDMDrawing"},
+        {"pydm.widgets.drawing", "PyDMDrawingEllipse", "PyDMDrawing"},
+        {"pydm.widgets.drawing", "PyDMDrawingImage", "PyDMDrawing"},
+        {"pydm.widgets.drawing", "PyDMDrawingLine", "PyDMDrawing"},
+        {"pydm.widgets.drawing", "PyDMDrawingPie", "PyDMDrawingArc"},
+        {"pydm.widgets.drawing", "PyDMDrawingRectangle", "PyDMDrawing"},
+        {"pydm.widgets.drawing", "PyDMDrawingTriangle", "PyDMDrawing"},
+        {"pydm.widgets.embedded_display", "PyDMEmbeddedDisplay", "QFrame"},
+        {"pydm.widgets.enum_combo_box", "PyDMEnumComboBox", "QWidget"},
+        {"pydm.widgets.image", "PyDMImageView", "ImageView"},
+        {"pydm.widgets.indicator", "PyDMIndicator", "QWidget"},
+        {"pydm.widgets.label", "PyDMLabel", "QLabel"},
+        {"pydm.widgets.line_edit", "PyDMLineEdit", "QLineEdit"},
+        {"pydm.widgets.pushbutton", "PyDMPushButton", "QPushButton"},
+        {"pydm.widgets.qtplugin_base", "PyDMDesignerPlugin", "QtDesigner.QPyDesignerCustomWidgetPlugin"},
+        {"pydm.widgets.related_display_button", "PyDMRelatedDisplayButton", "QPushButton"},
+        {"pydm.widgets.shell_command", "PyDMShellCommand", "QPushButton"},
+        {"pydm.widgets.slider", "PyDMSlider", "QFrame"},
+        {"pydm.widgets.spinbox", "PyDMSpinbox", "QDoubleSpinBox"},
+        {"pydm.widgets.symbol", "PyDMSymbol", "QWidget"},
+        {"pydm.widgets.timeplot", "PyDMTimePlot", "BasePlot"},
+        {"pydm.widgets.timeplot", "TimeAxisItem", "AxisItem"},
+        {"pydm.widgets.timeplot", "TimePlotCurveItem", "PlotCurveItem"},
+        {"pydm.widgets.timeplot_curve_editor", "TimePlotCurveEditorDialog", "QDialog"},
+        {"pydm.widgets.timeplot_qtplugin", "PyDMTimePlotExtensionFactory", "QExtensionFactory"},
+        {"pydm.widgets.timeplot_qtplugin", "PyDMTimePlotPlugin", "PyDMDesignerPlugin"},
+        {"pydm.widgets.timeplot_qtplugin", "PyDMTimePlotTaskMenuExtension", "QPyDesignerTaskMenuExtension"},
+        {"pydm.widgets.timeplot_table_model", "PyDMTimePlotCurvesModel", "QAbstractTableModel"},
+        {"pydm.widgets.waveformplot", "PyDMWaveformPlot", "BasePlot"},
+        {"pydm.widgets.waveformplot", "WaveformCurveItem", "PlotCurveItem"},
+        {"pydm.widgets.waveformplot_curve_editor", "WaveformPlotCurveEditorDialog", "QDialog"},
+        {"pydm.widgets.waveformplot_qtplugin", "PyDMWaveformPlotExtensionFactory", "QExtensionFactory"},
+        {"pydm.widgets.waveformplot_qtplugin", "PyDMWaveformPlotPlugin", "PyDMDesignerPlugin"},
+        {"pydm.widgets.waveformplot_qtplugin", "PyDMWaveformPlotTaskMenuExtension", "QPyDesignerTaskMenuExtension"},
+        {"pydm.widgets.waveformplot_table_model", "PyDMWaveformPlotCurvesModel", "QAbstractTableModel"},
+        {"pydm.widgets.waveformtable", "PyDMWaveformTable", "QTableWidget"},
+        {NULL, NULL, NULL},
+    };
+
+    xw->writeOpenTag("customwidgets");
+
+    int i=0;
+    while (custom_widgets[i][0] != NULL) {
+        xw->writeOpenTag("customwidget");
+        xw->writeTaggedString("class", custom_widgets[i][1]);
+        xw->writeTaggedString("extends", custom_widgets[i][2]);
+        xw->writeTaggedString("header", custom_widgets[i][0]);
+        xw->writeCloseTag("customwidget");
+        i++;
+    }
+
+    xw->writeCloseTag("customwidgets");
+    xw->writeRaw( "</ui>\n");
     file->close();
 }
 
-void myParserEDM::writeProperty(const QString& name, const QString& type, const QString& value )
+void myParserEDM::writeProperty(const QString& name, const QString& type, const QString& value, bool stdset)
 {
-    xw->writeOpenTag( "property", AttrMap("name", name) );
+    writeOpenProperty(name, stdset);
     xw->writeTaggedString( type, value );
     xw->writeCloseTag( "property" );
 }
 
-void myParserEDM::writeOpenProperty(const QString& name)
+void myParserEDM::writeOpenProperty(const QString& name, bool stdset)
 {
-    xw->writeOpenTag( "property", AttrMap("name", name) );
+    if (stdset)
+        xw->writeOpenTag( "property", AttrMap("name", name) );
+    else
+        xw->writeOpenTag( "property", AttrMap("name", name), AttrMap("stdset", "0") );
 }
 
 void myParserEDM::writeTaggedString(const QString& type, const QString& value )
@@ -192,7 +257,7 @@ void myParserEDM::Qt_writeCloseTag(char *tag, char *value, int visibilityStatic)
     writeCloseTag(tag);
 }
 
-void myParserEDM::Qt_handleString(char *prop, char *tag, char *value)
+void myParserEDM::Qt_handleString(char *prop, char *tag, const char *value)
 {
     writeOpenProperty(prop);
     writeTaggedString(tag, value);
@@ -246,7 +311,8 @@ void myParserEDM::writeFontProperties(int size, bool bold)
 void myParserEDM::Qt_setColor(char *property, int r, int g, int b, int alpha)
 {
     char asc[80];
-    writeOpenProperty(property);
+    if (property)
+        writeOpenProperty(property);
     sprintf(asc,"color alpha=\"%d\"", alpha);
     writeOpenTag(asc, "", "");
     sprintf(asc,"%d", r);
@@ -256,7 +322,8 @@ void myParserEDM::Qt_setColor(char *property, int r, int g, int b, int alpha)
     sprintf(asc,"%d", b);
     writeTaggedString("blue", asc);
     writeCloseTag("color");
-    writeCloseProperty();
+    if (property)
+        writeCloseProperty();
 }
 
 void myParserEDM::Qt_setColorForeground(char *widget, int r, int g, int b, int alpha)
