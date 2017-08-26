@@ -257,9 +257,9 @@ void myParserEDM::Qt_writeCloseTag(char *tag, char *value, int visibilityStatic)
     writeCloseTag(tag);
 }
 
-void myParserEDM::Qt_handleString(char *prop, char *tag, const char *value)
+void myParserEDM::Qt_handleString(char *prop, char *tag, const char *value, bool stdset)
 {
-    writeOpenProperty(prop);
+    writeOpenProperty(prop, stdset);
     writeTaggedString(tag, value);
     writeCloseProperty();
 }
@@ -308,11 +308,11 @@ void myParserEDM::writeFontProperties(int size, bool bold)
     writeCloseProperty();
 }
 
-void myParserEDM::Qt_setColor(char *property, int r, int g, int b, int alpha)
+void myParserEDM::Qt_setColor(char *property, int r, int g, int b, int alpha, bool stdset)
 {
     char asc[80];
     if (property)
-        writeOpenProperty(property);
+        writeOpenProperty(property, stdset);
     sprintf(asc,"color alpha=\"%d\"", alpha);
     writeOpenTag(asc, "", "");
     sprintf(asc,"%d", r);
@@ -340,7 +340,7 @@ void myParserEDM::Qt_setColorBackground(char *widget, int r, int g, int b, int a
 
 void myParserEDM::Qt_setColorLine(char *widget, int r, int g, int b, int alpha) {
     Q_UNUSED(widget);
-    Qt_setColor("lineColor", r, g, b, alpha);
+    Qt_setColor("penColor", r, g, b, alpha, false);
 }
 
 void myParserEDM::Qt_setColorGrid(char *widget, int r, int g, int b, int alpha) {
